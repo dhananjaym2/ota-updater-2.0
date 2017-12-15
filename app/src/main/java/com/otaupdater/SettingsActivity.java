@@ -158,7 +158,14 @@ public class SettingsActivity extends PreferenceActivity implements DialogCallba
         resetWarnPref = findPreference("resetwarn_pref");
         donatePref = findPreference("donate_pref");
 
-        bindService(new Intent("com.android.vending.billing.InAppBillingService.BIND"), serviceConn, Context.BIND_AUTO_CREATE);
+        // to resolve the following error:
+        //IllegalArgumentException: Service Intent must be explicit: Intent { act=com.android.vending.billing.InAppBillingService.BIND }
+        //modified the code as follows:(reference: https://stackoverflow.com/a/27027371/3811068)
+        Intent intent = new Intent("com.android.vending.billing.InAppBillingService.BIND");
+        // This is the key line that fixed everything for me
+        intent.setPackage("com.android.vending");
+
+        bindService(intent, serviceConn, Context.BIND_AUTO_CREATE);
 
         if (EXTRA_SHOW_GET_PROKEY_DLG.equals(getIntent().getAction())) {
             showGetProKeyDialog();

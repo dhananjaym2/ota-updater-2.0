@@ -111,9 +111,13 @@ public class DownloadListFragment extends ListFragment {
         File dir = state == 0 ? Config.ROM_DL_PATH_FILE : Config.KERNEL_DL_PATH_FILE;
         File[] files = dir.listFiles();
         fileList.clear();
-        for (File file : files) {
-            if (file.isDirectory()) continue;
-            fileList.add(new FileInfo(file));
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) continue;
+                fileList.add(new FileInfo(file));
+            }
+        } else {
+            Toast.makeText(getActivity(), "The files array is null", Toast.LENGTH_LONG).show();
         }
 
         if (fileAdapter == null) {

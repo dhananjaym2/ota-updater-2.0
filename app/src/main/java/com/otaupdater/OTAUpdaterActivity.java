@@ -96,7 +96,14 @@ public class OTAUpdaterActivity extends BaseDownloadDialogActivity {
         cfg = Config.getInstance(context);
 
         if (!cfg.hasProKey()) {
-            bindService(new Intent("com.android.vending.billing.InAppBillingService.BIND"),
+            // to resolve the following error:
+            //IllegalArgumentException: Service Intent must be explicit: Intent { act=com.android.vending.billing.InAppBillingService.BIND }
+            //modified the code as follows:(reference: https://stackoverflow.com/a/27027371/3811068)
+            Intent intent = new Intent("com.android.vending.billing.InAppBillingService.BIND");
+            // This is the key line that fixed everything for me
+            intent.setPackage("com.android.vending");
+
+            bindService(intent,
                     billingSrvConn = new ServiceConnection() {
                         @Override
                         public void onServiceDisconnected(ComponentName name) {
